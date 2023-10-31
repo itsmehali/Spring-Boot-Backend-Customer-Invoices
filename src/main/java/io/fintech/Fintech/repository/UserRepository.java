@@ -1,6 +1,7 @@
 package io.fintech.Fintech.repository;
 
 import io.fintech.Fintech.domain.User;
+import io.fintech.Fintech.dto.UserDTO;
 
 import java.util.Collection;
 
@@ -13,4 +14,6 @@ public interface UserRepository<T extends User> {
     Boolean delete(Long id);
 
     /* More Cpmplex operations */
+    User getUserByEmail(String email);
+    //void sendVerificationCode(UserDTO user);
 }

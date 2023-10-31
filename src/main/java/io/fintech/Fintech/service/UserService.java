@@ -5,4 +5,6 @@ import io.fintech.Fintech.dto.UserDTO;
 
 public interface UserService {
     UserDTO createUser(User user);
+    UserDTO getUserByEmail(String email);
+   // void sendVerificationCode(UserDTO user);
 }
