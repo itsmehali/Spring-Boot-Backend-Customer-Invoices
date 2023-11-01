@@ -15,5 +15,5 @@ public interface UserRepository<T extends User> {
 
     /* More Cpmplex operations */
     User getUserByEmail(String email);
-    //void sendVerificationCode(UserDTO user);
+    void sendVerificationCode(UserDTO user);
 }
