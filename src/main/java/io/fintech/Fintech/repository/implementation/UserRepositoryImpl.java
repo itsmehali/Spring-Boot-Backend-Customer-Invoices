@@ -240,9 +240,12 @@ public class UserRepositoryImpl implements UserRepository<User>, UserDetailsServ
         try {
              jdbc.update(UPDATE_USER_DETAILS_QUERY, getUserDetailsSqlParameterSource(user));
              return get(user.getId());
+        } catch (EmptyResultDataAccessException exception) {
+            log.error(exception.getMessage());
+            throw new ApiException("No User found by id: " + user.getId());
         } catch (Exception exception) {
             log.error(exception.getMessage());
-            throw new ApiException("This link is not valid. Please reset your password again");
+            throw new ApiException("An error occurred. Please try again");
         }
     }
 

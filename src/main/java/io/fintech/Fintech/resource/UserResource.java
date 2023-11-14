@@ -81,7 +81,7 @@ public class UserResource {
                         .build());
     }
 
-    @GetMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<HttpResponse> updateUser(@RequestBody @Valid UpdateForm user)  {
         UserDTO updatedUser = userService.updateUserDetails(user);
         return ResponseEntity.ok().body(
