@@ -6,6 +6,7 @@ import io.fintech.Fintech.domain.UserPrincipal;
 import io.fintech.Fintech.dto.UserDTO;
 import io.fintech.Fintech.exception.ApiException;
 import io.fintech.Fintech.form.LoginForm;
+import io.fintech.Fintech.form.UpdateForm;
 import io.fintech.Fintech.provider.TokenProvider;
 import io.fintech.Fintech.service.RoleService;
 import io.fintech.Fintech.service.UserService;
@@ -22,6 +23,9 @@ import java.net.URI;
 
 import static io.fintech.Fintech.dtomapper.UserDTOMapper.toUser;
 import static io.fintech.Fintech.utils.ExceptionUtils.processError;
+import static io.fintech.Fintech.utils.UserUtils.getAuthenticatedUser;
+import static io.fintech.Fintech.utils.UserUtils.getLoggedInUser;
+
 import static java.time.LocalTime.now;
 import static java.util.Map.of;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -44,13 +48,11 @@ public class UserResource {
     @PostMapping("/login")
     public ResponseEntity<HttpResponse> login(@RequestBody @Valid LoginForm loginForm) {
         Authentication authentication = authenticate(loginForm.getEmail(),loginForm.getPassword());
-        UserDTO user = getAuthenticatedUser(authentication);
+        UserDTO user = getLoggedInUser(authentication);
         return user.isUsingMfa() ? sendVerificationCode(user) : sendResponse(user);
     }
 
-    private UserDTO getAuthenticatedUser(Authentication authentication) {
-        return ((UserPrincipal) authentication.getPrincipal()).getUser();
-    }
+
 
 
     @PostMapping("/register")
@@ -68,7 +70,7 @@ public class UserResource {
 
     @GetMapping("/profile")
     public ResponseEntity<HttpResponse> profile(Authentication authentication)  {
-        UserDTO user = userService.getUserByEmail(authentication.getName());
+        UserDTO user = userService.getUserByEmail(getAuthenticatedUser(authentication).getEmail());
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
@@ -78,6 +80,20 @@ public class UserResource {
                         .statusCode(OK.value())
                         .build());
     }
+
+    @GetMapping("/update")
+    public ResponseEntity<HttpResponse> updateUser(@RequestBody @Valid UpdateForm user)  {
+        UserDTO updatedUser = userService.updateUserDetails(user);
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .timeStamp(now().toString())
+                        .data(of("user", updatedUser ))
+                        .message("User updated")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build());
+    }
+
 
     // START To reset password when user is not logged in
     @GetMapping("/resetpassword/{email}")
@@ -206,7 +222,7 @@ public class UserResource {
             Authentication authentication = authenticationManager.authenticate(unauthenticated(email,password));
             return authentication;
         } catch (Exception exception) {
-            processError(request, response, exception);
+            //processError(request, response, exception);
             throw new ApiException(exception.getMessage());
         }
     }

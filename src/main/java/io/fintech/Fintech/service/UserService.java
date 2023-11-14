@@ -2,6 +2,7 @@ package io.fintech.Fintech.service;
 
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
+import io.fintech.Fintech.form.UpdateForm;
 
 public interface UserService {
     UserDTO createUser(User user);
@@ -12,4 +13,5 @@ public interface UserService {
     UserDTO verifyPasswordKey(String key);
     void renewPassword(String key, String password, String confirmPassword);
     UserDTO verifyAccountKey(String key);
+    UserDTO updateUserDetails(UpdateForm user);
 }

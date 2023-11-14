@@ -2,6 +2,7 @@ package io.fintech.Fintech.repository;
 
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
+import io.fintech.Fintech.form.UpdateForm;
 
 import java.util.Collection;
 
@@ -21,4 +22,5 @@ public interface UserRepository<T extends User> {
     T verifyPasswordKey(String key);
     void renewPassword(String key, String password, String confirmPassword);
     T verifyAccountKey(String key);
+    T updateUserDetails(UpdateForm user);
 }

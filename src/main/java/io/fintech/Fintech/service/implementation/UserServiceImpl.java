@@ -3,6 +3,7 @@ package io.fintech.Fintech.service.implementation;
 import io.fintech.Fintech.domain.Role;
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
+import io.fintech.Fintech.form.UpdateForm;
 import io.fintech.Fintech.repository.RoleRepository;
 import io.fintech.Fintech.repository.UserRepository;
 import io.fintech.Fintech.service.UserService;
@@ -53,6 +54,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO verifyAccountKey(String key) {
         return maptoUserDTO(userRepository.verifyAccountKey(key));
+    }
+
+    @Override
+    public UserDTO updateUserDetails(UpdateForm user) {
+        return maptoUserDTO(userRepository.updateUserDetails(user));
     }
 
     private UserDTO maptoUserDTO(User user) {
