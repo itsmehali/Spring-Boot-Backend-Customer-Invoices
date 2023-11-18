@@ -18,28 +18,27 @@ import org.springframework.security.authentication.LockedException;
 import java.io.OutputStream;
 
 import static java.time.LocalTime.now;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 public class ExceptionUtils {
     public static void processError(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        HttpResponse httpResponse;
         if (exception instanceof ApiException || exception instanceof DisabledException ||
                 exception instanceof LockedException ||
-                exception instanceof BadCredentialsException || exception instanceof InvalidClaimException || exception instanceof TokenExpiredException) {
-            httpResponse = getHttpResponse(response, exception.getMessage(), BAD_REQUEST);
+                exception instanceof BadCredentialsException || exception instanceof InvalidClaimException) {
+            HttpResponse httpResponse = getHttpResponse(response, exception.getMessage(), BAD_REQUEST);
             writeResponse(response, httpResponse);
-            //HttpRequest httpRequest = (HttpRequest) getHttpRequest(request, exception.getMessage(), BAD_REQUEST);
-            //writeResponse((HttpServletResponse) request, (HttpResponse) httpRequest);
+        } else if (exception instanceof TokenExpiredException) {
+            HttpResponse httpResponse = getHttpResponse(response, exception.getMessage(), UNAUTHORIZED);
+            writeResponse(response, httpResponse);
         } else {
-            httpResponse = getHttpResponse(response, "An error occurred. Please try again", INTERNAL_SERVER_ERROR);
+            HttpResponse httpResponse = getHttpResponse(response, "An error occurred. Please try again", INTERNAL_SERVER_ERROR);
             writeResponse(response, httpResponse);
         }
         log.error(exception.getMessage());
     }
 
-   /* private static HttpResponse getHttpRequest(HttpServletRequest request, String message, HttpStatus httpStatus) {
+    private static HttpResponse getHttpRequest(HttpServletRequest request, String message, HttpStatus httpStatus) {
         HttpResponse httpRequest = HttpResponse.builder()
                 .timeStamp(now().toString())
                 .reason(message)
@@ -51,7 +50,7 @@ public class ExceptionUtils {
         request.getRequestURI();
         request.getContextPath();
         return httpRequest;
-    }*/
+    }
 
     private static void writeResponse(HttpServletResponse response, HttpResponse httpResponse) {
         OutputStream out;

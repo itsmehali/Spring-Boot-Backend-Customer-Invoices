@@ -35,7 +35,7 @@ public class SecurityConfig {
        ,"/user/refresh/token/**"};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf().disable().cors().disable();
+        http.csrf().disable().cors();//.disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeHttpRequests().requestMatchers (PUBLIC_URLS).permitAll();
         http.authorizeHttpRequests().requestMatchers(DELETE, "/user/delete/**").hasAnyAuthority("DELETE:USER");

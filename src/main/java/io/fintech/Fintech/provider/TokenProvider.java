@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 public class TokenProvider {
     private static final String GET_ARRAYS_LLC = "GET_ARRAY_LLC";
     private static final String CUSTOMER_MANAGEMENT_SERVICE = "CUSTOMER_MANAGEMENT_SERVICE";
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1_800_000;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 432_000_000;
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 432_000_000;
     private static final String AUTHORITIES = "authorities";
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";

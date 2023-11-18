@@ -7,6 +7,7 @@ import io.fintech.Fintech.dto.UserDTO;
 import io.fintech.Fintech.exception.ApiException;
 import io.fintech.Fintech.form.LoginForm;
 import io.fintech.Fintech.form.UpdateForm;
+import io.fintech.Fintech.form.UpdatePassword;
 import io.fintech.Fintech.provider.TokenProvider;
 import io.fintech.Fintech.service.RoleService;
 import io.fintech.Fintech.service.UserService;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import static io.fintech.Fintech.dtomapper.UserDTOMapper.toUser;
 import static io.fintech.Fintech.utils.ExceptionUtils.processError;
@@ -82,7 +84,8 @@ public class UserResource {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<HttpResponse> updateUser(@RequestBody @Valid UpdateForm user)  {
+    public ResponseEntity<HttpResponse> updateUser(@RequestBody @Valid UpdateForm user) throws InterruptedException {
+        TimeUnit.SECONDS.sleep(2);
         UserDTO updatedUser = userService.updateUserDetails(user);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
@@ -148,6 +151,19 @@ public class UserResource {
     }
 
     // END To reset password when user is not logged in
+
+    @PatchMapping("/update/password")
+    public ResponseEntity<HttpResponse> updatePassword(Authentication authentication, @RequestBody @Valid UpdatePassword form)  {
+        UserDTO userDTO = getAuthenticatedUser(authentication);
+        userService.updatePassoword(userDTO.getId(), form.getCurrentPassword(), form.getNewPassword(), form.getConfirmNewPassword());
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .timeStamp(now().toString())
+                        .message("Password updated successfully")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build());
+    }
 
     @GetMapping("/verify/account/{key}")
     public ResponseEntity<HttpResponse> verifyAccount(@PathVariable("key") String key)  {
