@@ -24,10 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static io.fintech.Fintech.dtomapper.UserDTOMapper.toUser;
-import static io.fintech.Fintech.utils.ExceptionUtils.processError;
 import static io.fintech.Fintech.utils.UserUtils.getAuthenticatedUser;
 import static io.fintech.Fintech.utils.UserUtils.getLoggedInUser;
 
@@ -222,6 +223,11 @@ public class UserResource {
                         .status(OK)
                         .statusCode(OK.value())
                         .build());
+    }
+
+    @GetMapping("/image/{fileName}")
+    public byte[] getProfileImage(@PathVariable("fileName") String fileName) throws IOException {
+      return Files.readAllBytes(Paths.get(System.getProperty("user.home") + "/Downloads/images" + fileName));git
     }
 
     @GetMapping("/verify/account/{key}")
