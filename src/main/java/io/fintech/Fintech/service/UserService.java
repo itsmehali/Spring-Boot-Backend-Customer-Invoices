@@ -3,6 +3,9 @@ package io.fintech.Fintech.service;
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
 import io.fintech.Fintech.form.UpdateForm;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface UserService {
     UserDTO createUser(User user);
@@ -17,4 +20,7 @@ public interface UserService {
     UserDTO getUserById(Long userId);
     void updatePassword(Long userId, String currentPassword, String newPassword, String confirmNewPassword);
     void updateUserRole(Long userId, String roleName);
+    void updateAccountSettings(Long id, Boolean enabled, Boolean notLocked);
+    UserDTO toggleMfa(String email);
+    void updateImage(UserDTO user, MultipartFile image) throws IOException;
 }

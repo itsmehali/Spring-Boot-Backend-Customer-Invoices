@@ -9,6 +9,9 @@ import io.fintech.Fintech.repository.UserRepository;
 import io.fintech.Fintech.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static io.fintech.Fintech.dtomapper.UserDTOMapper.fromUser;
 
@@ -74,6 +77,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserRole(Long userId, String roleName) {
         roleRepository.updateUserRole(userId, roleName);
+    }
+
+    @Override
+    public void updateAccountSettings(Long userId, Boolean enabled, Boolean notLocked) {
+        userRepository.updateAccountSettings(userId, enabled, notLocked);
+    }
+
+    @Override
+    public UserDTO toggleMfa(String email) {
+        return maptoUserDTO(userRepository.toggleMfa(email));
+    }
+
+    @Override
+    public void updateImage(UserDTO user, MultipartFile image) throws IOException {
+        userRepository.updateImage(user, image);
     }
 
     private UserDTO maptoUserDTO(User user) {

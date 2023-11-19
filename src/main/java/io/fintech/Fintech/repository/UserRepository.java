@@ -3,7 +3,9 @@ package io.fintech.Fintech.repository;
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
 import io.fintech.Fintech.form.UpdateForm;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public interface UserRepository<T extends User> {
@@ -24,4 +26,7 @@ public interface UserRepository<T extends User> {
     T verifyAccountKey(String key);
     T updateUserDetails(UpdateForm user);
     void updatePassword(Long id, String currentPassword, String newPassword, String confirmNewPassword);
+    void updateAccountSettings(Long userId, Boolean enabled, Boolean notLocked);
+    User toggleMfa(String email);
+    void updateImage(UserDTO user, MultipartFile image) throws IOException;
 }
