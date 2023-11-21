@@ -46,6 +46,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.time.DateFormatUtils.format;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
 
 @Repository
 @RequiredArgsConstructor
@@ -119,7 +120,7 @@ public class UserRepositoryImpl implements UserRepository<User>, UserDetailsServ
     }
 
     private String getVerificationUrl(String key, String type) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/verify/" + type + "/" + key).toUriString();
+        return fromCurrentContextPath().path("/user/verify/" + type + "/" + key).toUriString();
     }
 
     @Override
@@ -308,12 +309,12 @@ public class UserRepositoryImpl implements UserRepository<User>, UserDetailsServ
     }
 
     private String setUserImageUrl(String email) {
-       return ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/image/" + email + ".png").toUriString();
+        return fromCurrentContextPath().path("/user/image/" + email + ".png").toUriString();
     }
 
     private void saveImage(String email, MultipartFile image) {
         Path fileStorageLocation = Paths.get(System.getProperty("user.home") + "/Downloads/images/").toAbsolutePath().normalize();
-        if (!Files.exists(fileStorageLocation)) {
+        if(!Files.exists(fileStorageLocation)) {
             try {
                 Files.createDirectories(fileStorageLocation);
             } catch (Exception exception) {
@@ -325,6 +326,7 @@ public class UserRepositoryImpl implements UserRepository<User>, UserDetailsServ
         try {
             Files.copy(image.getInputStream(), fileStorageLocation.resolve(email + ".png"), REPLACE_EXISTING);
         } catch (IOException exception) {
+            log.error(exception.getMessage());
             throw new ApiException(exception.getMessage());
         }
         log.info("File saved in: {} folder", fileStorageLocation);
