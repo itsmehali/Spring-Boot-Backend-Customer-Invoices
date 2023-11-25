@@ -13,13 +13,13 @@ public class RequestUtils {
 
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddress = "Unknown IP";
-        if (request != null) {
+        if(request != null) {
             ipAddress = request.getHeader(X_FORWARDED_FOR_HEADER);
-            if (ipAddress == null || "".equals(ipAddress)) {
+            if(ipAddress == null || "".equals(ipAddress)) {
                 ipAddress = request.getRemoteAddr();
             }
         }
-        return  ipAddress;
+        return ipAddress;
     }
 
     public static String getDevice(HttpServletRequest request) {

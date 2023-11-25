@@ -12,6 +12,7 @@ import io.fintech.Fintech.form.SettingsForm;
 import io.fintech.Fintech.form.UpdateForm;
 import io.fintech.Fintech.form.UpdatePassword;
 import io.fintech.Fintech.provider.TokenProvider;
+import io.fintech.Fintech.service.EventService;
 import io.fintech.Fintech.service.RoleService;
 import io.fintech.Fintech.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +53,7 @@ public class UserResource {
     private static final String TOKEN_PREFIX = "Bearer ";
     private final UserService userService;
     private final RoleService roleService;
+    private final EventService eventService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final HttpServletRequest request;
@@ -83,7 +85,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", user, "roles", roleService.getRoles()))
+                        .data(of("user", user,"events", eventService.getEventsByUserId(user.getId()), "roles", roleService.getRoles()))
                         .message("Profile Retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -97,7 +99,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", updatedUser ))
+                        .data(of("user", updatedUser, "events", eventService.getEventsByUserId(user.getId()), "roles", roleService.getRoles()))
                         .message("User updated")
                         .status(OK)
                         .statusCode(OK.value())
@@ -168,7 +170,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", userService.getUserById(userDTO.getId()), "roles", roleService.getRoles()))
+                        .data(of("user", userService.getUserById(userDTO.getId()), "events", eventService.getEventsByUserId(userDTO.getId()), "roles", roleService.getRoles()))
                         .message("Password updated successfully")
                         .status(OK)
                         .statusCode(OK.value())
@@ -183,7 +185,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", userService.getUserById(userDTO.getId()), "roles", roleService.getRoles()))
+                        .data(of("user", userService.getUserById(userDTO.getId()), "events", eventService.getEventsByUserId(userDTO.getId()),"roles", roleService.getRoles()))
                         .message("Role updated successfully")
                         .status(OK)
                         .statusCode(OK.value())
@@ -198,7 +200,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", userService.getUserById(userDTO.getId()), "roles", roleService.getRoles()))
+                        .data(of("user", userService.getUserById(userDTO.getId()), "events", eventService.getEventsByUserId(userDTO.getId()),"roles", roleService.getRoles()))
                         .message("Account settings updated successfully")
                         .status(OK)
                         .statusCode(OK.value())
@@ -213,7 +215,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", user, "roles", roleService.getRoles()))
+                        .data(of("user", user, "events", eventService.getEventsByUserId(user.getId()),"roles", roleService.getRoles()))
                         .message("Multi-Factor Authentication updated")
                         .status(OK)
                         .statusCode(OK.value())
@@ -228,7 +230,7 @@ public class UserResource {
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
-                        .data(of("user", userService.getUserById(user.getId()), "roles", roleService.getRoles()))
+                        .data(of("user", userService.getUserById(user.getId()),"events", eventService.getEventsByUserId(user.getId()),"roles", roleService.getRoles()))
                         .message("Profile image updated")
                         .status(OK)
                         .statusCode(OK.value())
