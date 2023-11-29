@@ -2,6 +2,7 @@ package io.fintech.Fintech.service;
 
 import io.fintech.Fintech.domain.Customer;
 import io.fintech.Fintech.domain.Invoice;
+import io.fintech.Fintech.domain.Stats;
 import org.springframework.data.domain.Page;
 
 public interface CustomerService {
@@ -18,4 +19,5 @@ public interface CustomerService {
     Page<Invoice> getInvoices(int page, int size);
     void addInvoiceToCustomer(Long id, Invoice invoice);
     Invoice getInvoice(Long id);
+    Stats getStats();
 }

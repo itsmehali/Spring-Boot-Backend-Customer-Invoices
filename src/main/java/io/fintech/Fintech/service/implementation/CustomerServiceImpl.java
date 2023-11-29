@@ -2,17 +2,22 @@ package io.fintech.Fintech.service.implementation;
 
 import io.fintech.Fintech.domain.Customer;
 import io.fintech.Fintech.domain.Invoice;
+import io.fintech.Fintech.domain.Stats;
 import io.fintech.Fintech.repository.CustomerRepository;
 import io.fintech.Fintech.repository.InvoiceRepository;
+import io.fintech.Fintech.rowmapper.StatsRowMapper;
 import io.fintech.Fintech.service.CustomerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
+import static io.fintech.Fintech.query.CustomerQuery.STATS_QUERY;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.springframework.data.domain.PageRequest.of;
 
@@ -23,6 +28,7 @@ import static org.springframework.data.domain.PageRequest.of;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final InvoiceRepository invoiceRepository;
+    private final NamedParameterJdbcTemplate jdbc;
 
 
     @Override
@@ -78,5 +84,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Invoice getInvoice(Long id) {
         return invoiceRepository.findById(id).get();
+    }
+    @Override
+    public Stats getStats() {
+        return jdbc.queryForObject(STATS_QUERY, Map.of(), new StatsRowMapper());
     }
 }

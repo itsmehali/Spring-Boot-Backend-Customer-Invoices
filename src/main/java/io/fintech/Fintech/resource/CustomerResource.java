@@ -34,7 +34,8 @@ public class CustomerResource {
                 HttpResponse.builder()
                         .timeStamp(now().toString())
                         .data(of("user", userService.getUserByEmail(user.getEmail()),
-                                "customers", customerService.getCustomers(page.orElse(0), size.orElse(10))))
+                                "page", customerService.getCustomers(page.orElse(0), size.orElse(10)),
+                            "stats", customerService.getStats()))
                         .message("Customers retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -74,7 +75,7 @@ public class CustomerResource {
                 HttpResponse.builder()
                         .timeStamp(now().toString())
                         .data(of("user", userService.getUserByEmail(user.getEmail()),
-                                "customers", customerService.searchCustomers(name.orElse(""), page.orElse(0), size.orElse(10))))
+                                "page", customerService.searchCustomers(name.orElse(""), page.orElse(0), size.orElse(10))))
                         .message("Customers retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -95,7 +96,7 @@ public class CustomerResource {
     }
 
 
-    @PostMapping("/invoice/create")
+    @PostMapping("/invoice/created")
     public ResponseEntity<HttpResponse> createInvoice(@AuthenticationPrincipal UserDTO user, @RequestBody Invoice invoice) {
         return ResponseEntity.created(URI.create(""))
                 .body(
@@ -109,17 +110,17 @@ public class CustomerResource {
                                 .build());
     }
 
-    @PostMapping("/invoice/new")
+    @GetMapping("/invoice/new")
     public ResponseEntity<HttpResponse> newInvoice(@AuthenticationPrincipal UserDTO user) {
         return ResponseEntity.ok(
-                        HttpResponse.builder()
-                                .timeStamp(now().toString())
-                                .data(of("user", userService.getUserByEmail(user.getEmail()),
-                                        "customers", customerService.getCustomers()))
-                                .message("Customers retrieved")
-                                .status(OK)
-                                .statusCode(OK.value())
-                                .build());
+                HttpResponse.builder()
+                        .timeStamp(now().toString())
+                        .data(of("user", userService.getUserByEmail(user.getEmail()),
+                                "customers", customerService.getCustomers()))
+                        .message("Customers retrieved")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build());
     }
 
     @GetMapping("/invoice/list")
@@ -128,21 +129,22 @@ public class CustomerResource {
                 HttpResponse.builder()
                         .timeStamp(now().toString())
                         .data(of("user", userService.getUserByEmail(user.getEmail()),
-                                "customers", customerService.getInvoices(page.orElse(0), size.orElse(10))))
-                        .message("Invoice retriev")
+                                "page", customerService.getInvoices(page.orElse(0), size.orElse(10)),
+                        "stats", customerService.getStats()))
+                        .message("Invoice retrieved")
                         .status(OK)
                         .statusCode(OK.value())
                         .build());
     }
 
     @GetMapping("/invoice/get/{id}")
-    public ResponseEntity<HttpResponse> getInvoice(@AuthenticationPrincipal UserDTO user, @PathVariable("id") Long id, @RequestBody Invoice invoice) {
-        customerService.addInvoiceToCustomer(id, invoice);
+    public ResponseEntity<HttpResponse> getInvoice(@AuthenticationPrincipal UserDTO user, @PathVariable("id") Long id) {
+        Invoice invoice = customerService.getInvoice(id);
         return ResponseEntity.ok(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
                         .data(of("user", userService.getUserByEmail(user.getEmail()),
-                                "invoice", customerService.getInvoice(id)))
+                                "invoice", invoice, "customer", invoice.getCustomer()))
                         .message("Invoice retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -150,13 +152,14 @@ public class CustomerResource {
     }
 
     @PostMapping("/invoice/addtocustomer/{id}")
-    public ResponseEntity<HttpResponse> addInvoiceToCustomer(@AuthenticationPrincipal UserDTO user, @PathVariable("id") Long id) {
+    public ResponseEntity<HttpResponse> addInvoiceToCustomer(@AuthenticationPrincipal UserDTO user, @PathVariable("id") Long id, @RequestBody Invoice invoice) {
+        customerService.addInvoiceToCustomer(id, invoice);
         return ResponseEntity.ok(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
                         .data(of("user", userService.getUserByEmail(user.getEmail()),
                                 "customers", customerService.getCustomers()))
-                        .message("Customers retrieved")
+                        .message(String.format("Invoice added to customer with ID: %s", id))
                         .status(OK)
                         .statusCode(OK.value())
                         .build());
