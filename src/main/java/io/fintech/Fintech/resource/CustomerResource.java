@@ -5,22 +5,31 @@ import io.fintech.Fintech.domain.HttpResponse;
 import io.fintech.Fintech.domain.Invoice;
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.dto.UserDTO;
+import io.fintech.Fintech.report.CustomerReport;
 import io.fintech.Fintech.service.CustomerService;
 import io.fintech.Fintech.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalTime.now;
 import static java.util.Map.of;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequestMapping(path="/customer")
@@ -163,5 +172,17 @@ public class CustomerResource {
                         .status(OK)
                         .statusCode(OK.value())
                         .build());
+    }
+
+    @GetMapping("/download/report")
+    public ResponseEntity<Resource> downloadReport() {
+        List<Customer> customers = new ArrayList<>();
+        customerService.getCustomers().iterator().forEachRemaining(customers::add);
+        CustomerReport report = new CustomerReport(customers);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("File-Name", "customer-report.xlsx");
+        headers.add(CONTENT_DISPOSITION, "attachment;File-Name=customer-report.xlsx");
+        return ResponseEntity.ok().contentType(parseMediaType("application/vnd.ms-excel"))
+                .headers(headers).body(report.export());
     }
 }
