@@ -4,7 +4,6 @@ import io.fintech.Fintech.domain.HttpResponse;
 import io.fintech.Fintech.domain.User;
 import io.fintech.Fintech.domain.UserPrincipal;
 import io.fintech.Fintech.dto.UserDTO;
-import io.fintech.Fintech.enumeration.EventType;
 import io.fintech.Fintech.event.NewUserEvent;
 import io.fintech.Fintech.exception.ApiException;
 import io.fintech.Fintech.form.LoginForm;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
 import static io.fintech.Fintech.dtomapper.UserDTOMapper.toUser;
 import static io.fintech.Fintech.enumeration.EventType.*;
@@ -208,8 +206,7 @@ public class UserResource {
     }
 
     @PatchMapping("/togglemfa")
-    public ResponseEntity<HttpResponse> toggleMfa(Authentication authentication) throws InterruptedException {
-        TimeUnit.SECONDS.sleep(2);
+    public ResponseEntity<HttpResponse> toggleMfa(Authentication authentication) {
         UserDTO user = userService.toggleMfa(getAuthenticatedUser(authentication).getEmail());
         publisher.publishEvent(new NewUserEvent(user.getEmail(), MFA_UPDATE));
         return ResponseEntity.ok().body(
