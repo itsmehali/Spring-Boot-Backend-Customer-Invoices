@@ -6,6 +6,7 @@ import io.fintech.Fintech.dto.UserDTO;
 import io.fintech.Fintech.exception.ApiException;
 import io.fintech.Fintech.repository.ProductRepository;
 import io.fintech.Fintech.rowmapper.ProductCategoryRowMapper;
+import io.fintech.Fintech.rowmapper.ProductRowMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -46,12 +47,18 @@ public class ProductRepositoryImpl implements ProductRepository<Product> {
     }
 
     @Override
-    public Collection<Product> list(int page, int pageSize) {
-        return null;
+    public Product get(Long id) {
+        log.info("Fetching Products with the ID: " + id);
+        try {
+            return jdbc.queryForObject(SELECT_PRODUCT_BY_ID_QUERY, of("productId", id), new ProductRowMapper());
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            throw new ApiException("An error occurred. Please try again");
+        }
     }
 
     @Override
-    public Product get(Long id) {
+    public Collection<Product> list(int page, int pageSize) {
         return null;
     }
 

@@ -18,7 +18,7 @@ public class ProductCategoryRowMapper implements RowMapper<ProductDTO> {
         return ProductDTO.builder()
                 .id(resultSet.getLong("id"))
                 .productName(resultSet.getString("product_name"))
-                .categoryName(resultSet.getString("category_name"))
+                //.categoryName(resultSet.getString("category_name"))
                 .categoryId(resultSet.getLong("category_id"))
                 .createdAt(resultSet.getTimestamp("created_at").toLocalDateTime())
                 .build();

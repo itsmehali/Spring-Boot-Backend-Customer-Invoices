@@ -2,9 +2,12 @@ package io.fintech.Fintech.resource;
 
 import io.fintech.Fintech.domain.HttpResponse;
 import io.fintech.Fintech.domain.Product;
+import io.fintech.Fintech.dto.ProductDTO;
 import io.fintech.Fintech.dto.UserDTO;
+import io.fintech.Fintech.dtomapper.ProductMapper;
 import io.fintech.Fintech.service.ProductService;
 import io.fintech.Fintech.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,7 +29,8 @@ public class ProductResource {
     private final ProductService productService;
 
     @PostMapping("/create")
-    public ResponseEntity<HttpResponse> saveProduct(@AuthenticationPrincipal UserDTO user, @RequestBody Product product) {
+    public ResponseEntity<HttpResponse> saveProduct(@AuthenticationPrincipal @Valid UserDTO user, @RequestBody @Valid Product product) {
+        //Product product = ProductMapper.INSTANCE.toEntity(productDTO);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .timeStamp(now().toString())
